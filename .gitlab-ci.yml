@@ -36,6 +36,8 @@ dockerize-job:
     - amazon-linux-extras install docker
     - aws --version
     - docker --version
+    - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/auth >> ./.npmrc
+    - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/npm-logistics-local/auth/ct-shipping >> ./.npmrc
     - docker build -t $ECR_REPO:hima .
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - docker push $ECR_REPO:hima
