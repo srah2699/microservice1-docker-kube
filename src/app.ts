@@ -5,7 +5,7 @@ import journal from '@ct-shipping/journal'
 import milieu from '@ct-shipping/milieu';
 
 const app: Application = express();
-const PORT = 3004;
+const PORT = 3005;
 app.use(express.json());
 
 app.use((req: Request, res: Response, next: NextFunction) => {
