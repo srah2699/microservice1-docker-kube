@@ -5,8 +5,8 @@
   "main": "dist/src/server.js",
   "scripts": {
     "start": "tsc && node dist/src/server.js",
-    "utest": "tsc && jest dist/test/unit",
-    "itest": "tsc && jest dist/test/integration",
+    "test:u": "tsc && jest dist/test/unit",
+    "test:i": "tsc && jest dist/test/integration",
     "build": "tsc"
   },
   "keywords": [],
