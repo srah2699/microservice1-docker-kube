@@ -1,0 +1,4 @@
+{
+    "SecretString": "{\"string\":\"secret-string\",\"PORT\":\"3005\"}",
+    "URL" : "http://localhost:3005/"
+}

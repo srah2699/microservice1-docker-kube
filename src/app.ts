@@ -5,7 +5,6 @@ import journal from '@ct-shipping/journal'
 import milieu from '@ct-shipping/milieu';
 
 const app: Application = express();
-const PORT = 3005;
 app.use(express.json());
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -27,11 +26,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.post('/', (req, res) => {
   const { value } = req.body;
-  const constr = value.concat("D")
+  const constr = value.concat("E")
   journal.info(
-    `Calling 5th microservice with data: ${JSON.stringify({ value: constr })}`
+    `5th microservice with data: ${JSON.stringify({ value: constr })}`
   );
-  res.send({value : constr}); 
+  res.status(200).send({value : constr}); 
 })
 
 app.get('/test/:string', (req: Request, res: Response) => {
@@ -40,6 +39,4 @@ app.get('/test/:string', (req: Request, res: Response) => {
   res.status(200).send(bool);
 })
 
-app.listen(PORT, () => {
-  console.log("listening")
-});
+export default app;
