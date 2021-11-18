@@ -18,11 +18,14 @@ build-job: # This job runs in the build stage, which runs first.
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/npm-logistics-local/auth/ct-shipping >> ./.npmrc
     - npm install
     - echo "Built successfully "
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 week
 
 unit-test-job:
   stage: test
   script:
-    - npm install
     - npm run utest
   artifacts:
     paths:
