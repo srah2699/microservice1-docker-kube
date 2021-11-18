@@ -9,8 +9,9 @@ stages: # List of stages for jobs, and their order of execution
   - test
   - docker
 
+image: node:latest
+
 build-job: # This job runs in the build stage, which runs first.
-  image: node:latest
   stage: build
   script:
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/auth >> ./.npmrc
@@ -22,7 +23,7 @@ unit-test-job:
   stage: test
   script:
     - npm install
-    - npm run test:u
+    - npm run utest
   artifacts:
     paths:
       - node_modules/
