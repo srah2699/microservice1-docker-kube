@@ -21,6 +21,7 @@ build-job: # This job runs in the build stage, which runs first.
 unit-test-job:
   stage: test
   script:
+    - npm install
     - npm run test:u
   artifacts:
     paths:
