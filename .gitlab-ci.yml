@@ -4,47 +4,70 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
 
-stages: # List of stages for jobs, and their order of execution
+image:
+  name: amazon/aws-cli
+  entrypoint: ['']
+services:
+  - docker:18.09.7-dind
+
+
+stages: 
   - build
   - test
-  - docker
+  - Test Deploy
+  - Production Deploy
+
+before_script:
+  - amazon-linux-extras install docker
+  - aws --version
+  - docker --version
+  - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 349058034363.dkr.ecr.eu-west-1.amazonaws.com
 
 image: node:latest
 
-build-job: # This job runs in the build stage, which runs first.
+build-job: 
   stage: build
   script:
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/auth >> ./.npmrc
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/npm-logistics-local/auth/ct-shipping >> ./.npmrc
-    - npm install
-    - echo "Built successfully "
+    - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build .
+    - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
   artifacts:
     paths:
-      - node_modules/
-    expire_in: 1 week
+      - .npmrc
+    expire_in: 1 day
+
 
 unit-test-job:
   stage: test
   script:
-    - npm run utest
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 week
+  - docker pull $DOCKER_REGISTRY/team-legion:hima_build
+  - CONTAINER_ID=$(docker run -d $DOCKER_REGISTRY/team-legion:hima_build)
+  - docker exec $CONTAINER_ID npm run utest
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
 
-dockerize-job:
-  image:
-    name: amazon/aws-cli
-    entrypoint: [""]
-  services:
-    - docker:19.03.5-dind
-  stage: docker
+Build and Push Testing:
+  stage: Test Deploy
   script:
-    - amazon-linux-extras install docker
-    - aws --version
-    - docker --version
-    - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/auth >> ./.npmrc
-    - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/npm-logistics-local/auth/ct-shipping >> ./.npmrc
+    - echo "Build and Push docker image"
+    - aws secretsmanager get-secret-value --secret-id "m5" > config.json
+    - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test .
+    - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/'
+
+Build and Push Production:
+  stage: Production Deploy
+  script:
+    - echo "Build and Push docker image"
+    - aws secretsmanager get-secret-value --secret-id "m5" > config.json
     - docker build -t $ECR_REPO:hima .
-    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - docker push $ECR_REPO:hima
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|production)$/'
+
+
+
