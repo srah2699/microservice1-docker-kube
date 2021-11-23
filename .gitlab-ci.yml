@@ -32,8 +32,8 @@ build-job:
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/npm-logistics-local/auth/ct-shipping >> ./.npmrc
     - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build .
     - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
+ # rules:
+ #   - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
   artifacts:
     paths:
       - .npmrc
@@ -46,8 +46,8 @@ unit-test-job:
   - docker pull $DOCKER_REGISTRY/team-legion:hima_build
   - CONTAINER_ID=$(docker run -d $DOCKER_REGISTRY/team-legion:hima_build)
   - docker exec $CONTAINER_ID npm run utest
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
+#  rules:
+#    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
 
 Build and Push Testing:
   stage: Test Deploy
@@ -56,8 +56,8 @@ Build and Push Testing:
     - aws secretsmanager get-secret-value --secret-id "m5" > config.json
     - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test .
     - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test
-  rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/'
+#  rules:
+#    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/'
 
 Build and Push Production:
   stage: Production Deploy
