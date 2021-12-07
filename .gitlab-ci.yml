@@ -50,8 +50,8 @@ Build and Push Testing:
   script:
     - echo "Build and Push docker image"
     - aws secretsmanager get-secret-value --secret-id "m5" > config.json
-    - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test .
-    - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test
+    - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2 .
+    - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2
 #  rules:
 #    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/'
 
