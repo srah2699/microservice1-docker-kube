@@ -1,5 +1,5 @@
 variables:
-  DOCKER_REGISTRY: 349058034363.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_REGISTRY: userId.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
@@ -14,7 +14,7 @@ before_script:
   - amazon-linux-extras install docker
   - aws --version
   - docker --version
-  - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 349058034363.dkr.ecr.eu-west-1.amazonaws.com
+  - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin userId.dkr.ecr.eu-west-1.amazonaws.com
 
 image:
   name: amazon/aws-cli
@@ -27,8 +27,8 @@ build-job:
   script:
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/auth >> ./.npmrc
     - curl --silent --show-error --fail -u$ARTIFACTORY_USERNAME:$ARTIFACTORY_API_KEY $ARTIFACTORY_URL/artifactory/api/npm/npm-logistics-local/auth/ct-shipping >> ./.npmrc
-    - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build .
-    - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build
+    - docker build -t userId.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build .
+    - docker push userId.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_build
   # rules:
   #   - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/ || $CI_COMMIT_BRANCH =~ /^(main|production)$/'
   artifacts:
@@ -50,8 +50,8 @@ Build and Push Testing:
   script:
     - echo "Build and Push docker image"
     - aws secretsmanager get-secret-value --secret-id "m5" > config.json
-    - docker build -t 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2 .
-    - docker push 349058034363.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2
+    - docker build -t userId.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2 .
+    - docker push userId.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2
 #  rules:
 #    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^(main|production)$/'
 

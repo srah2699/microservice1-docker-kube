@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: microservice4
-          image: ms4:latest
+          image: userId.dkr.ecr.eu-west-1.amazonaws.com/team-legion:hima_test2
           ports:
             - containerPort: 3005
           imagePullPolicy: Always
